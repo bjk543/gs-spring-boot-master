@@ -9,12 +9,12 @@ node('master') {
           checkout scm
           def mvnHome = tool 'mvn'
           sh 'cd initial;'
-          sh 'mvn -v'  
-          
+          sh '${mvnHome}/bin/mvn -v'  
+
        }
 
        stage('Test'){
-          sh 'mvn -v'
+          sh '${mvnHome}/bin/mvn -v'
           sh 'cd initial;${mvnHome}/bin/mvn test'
 
        }
