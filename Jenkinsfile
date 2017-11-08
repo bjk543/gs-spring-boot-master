@@ -5,15 +5,28 @@ pipeline {
         jdk 'jdk8' 
     }
         stages {
-    try{
             stage ('Initialize') {
+    try{
                 steps {
                     sh '''
                         echo "PATH = ${PATH}"
                         echo "M2_HOME = ${M2_HOME}"
                     ''' 
                 }
+                }catch (err) {
+
+        currentBuild.result = "FAILURE"
+
+            mail body: "project build error is here: ${env.BUILD_URL}" ,
+            from: 'manny.shen@pentium.network',
+            replyTo: 'manny.shen@pentium.network',
+            subject: 'project build failed',
+            to: 'manny.shen@pentium.network'
+
+        throw err
+    }
             }
+
 
             stage ('install') {
                 steps {
@@ -50,19 +63,8 @@ pipeline {
                         subject: 'project build successful',
                         to: 'manny.shen@pentium.network'
             }
-        }
-        catch (err) {
-
-        currentBuild.result = "FAILURE"
-
-            mail body: "project build error is here: ${env.BUILD_URL}" ,
-            from: 'manny.shen@pentium.network',
-            replyTo: 'manny.shen@pentium.network',
-            subject: 'project build failed',
-            to: 'manny.shen@pentium.network'
-
-        throw err
-    }
+        
+        
     }
     
 }
