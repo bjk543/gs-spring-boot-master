@@ -22,9 +22,14 @@ pipeline {
                     sh 'mvn package'
                 } 
             }
+            stage('Deploy'){
+                dir ('initial') {
+                    sh 'java -jar target/gs-spring-boot-0.1.0.jar'
+                }
+            }
             post {
                 success {
-                    junit 'target/surefire-reports/**/*.xml' 
+                    sh 'curl localhost:8090'
                 }
             }
         }
