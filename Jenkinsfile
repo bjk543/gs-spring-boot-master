@@ -8,6 +8,7 @@ node('master') {
        stage('Checkout'){
           checkout scm
           def mvnHome = tool 'mvn'
+          sh 'cd initial'
           sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${env.BUILD_NUMBER}"
           sh 'mvn -v'
           
