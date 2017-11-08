@@ -43,9 +43,8 @@ pipeline {
             }
             stage('Deliver') { 
                 steps {
-                    dir ('initial/target') {
-                        sh 'nohup java -jar *.jar &'
-                        sh 'while ! httping -qc1 http://localhost:8090 ; do sleep 1 ; done'
+                    dir ('initial/jenkins/scripts') {
+                        sh 'sh deliver.sh'
                     }
                 }
             }
