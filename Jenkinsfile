@@ -35,16 +35,7 @@ pipeline {
                 }
             }
             
-            stage('Cleanup'){
-
-            echo 'prune and cleanup'
-
-            mail body: 'project build successful',
-                        from: 'manny.shen@pentium.network',
-                        replyTo: 'manny.shen@pentium.network',
-                        subject: 'project build successful',
-                        to: 'manny.shen@pentium.network'
-            }
+            
         
         
     }
