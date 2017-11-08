@@ -1,60 +1,45 @@
-node('master') {
+// see https://dzone.com/refcardz/continuous-delivery-with-jenkins-workflow for tutorial
+// see https://documentation.cloudbees.com/docs/cookbook/_pipeline_dsl_keywords.html for dsl reference
+// This Jenkinsfile should simulate a minimal Jenkins pipeline and can serve as a starting point.
+// NOTE: sleep commands are solelely inserted for the purpose of simulating long running tasks when you run the pipeline
+// https://github.com/kesselborn/jenkinsfile
+node {
+   // Mark the code checkout 'stage'....
+   stage 'checkout'
+
+   // Get some code from a GitHub repository
+   git url: 'https://github.com/bjk543/gs-spring-boot-master'
+   sh 'git clean -fdx; sleep 4;'
+
+   // Get the maven tool.
+   // ** NOTE: This 'mvn' maven tool must be configured
+   // **       in the global configuration.
+   def mvnHome = tool 'mvn'
+
+   stage 'build'
+   // set the version of the build artifact to the Jenkins BUILD_NUMBER so you can
+   // map artifacts to Jenkins builds
+   sh "cd initial"
+   sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${env.BUILD_NUMBER}"
+   sh "${mvnHome}/bin/mvn package"
+
+   stage 'test'
+   parallel 'test': {
+     sh "${mvnHome}/bin/mvn test; sleep 2;"
+   }, 'verify': {
+     sh "${mvnHome}/bin/mvn verify; sleep 3"
+   }
+
+   stage 'archive'
+   archive 'target/*.jar'
+}
 
 
-    currentBuild.result = "SUCCESS"
+node {
+   stage 'deploy Canary'
+   sh 'echo "write your deploy code here"; sleep 5;'
 
-    try {
-
-       stage('Checkout'){
-          checkout scm
-          def mvnHome = tool 'mvn'
-          sh 'cd initial;'
-          sh '${mvnHome}/bin/mvn -v'  
-
-       }
-
-       stage('Test'){
-          sh '${mvnHome}/bin/mvn -v'
-          sh 'cd initial;${mvnHome}/bin/mvn test'
-
-       }
-
-       stage('Build Docker'){
-         sh 'cd initial'
-         sh '${mvnHome}/bin/mvn package'
-       }
-
-       stage('Deploy'){
-         sh 'cd initial'
-         sh 'java -jar target/gs-spring-boot-0.1.0.jar'
-       }
-
-       stage('Cleanup'){
-
-         echo 'prune and cleanup'
-         sh 'curl localhost:8090'
-
-         mail body: 'project build successful',
-                     from: 'manny.shen@pentium.network',
-                     replyTo: 'manny.shen@pentium.network',
-                     subject: 'project build successful',
-                     to: 'manny.shen@pentium.network'
-       }
-
-
-
-    }
-    catch (err) {
-
-        currentBuild.result = "FAILURE"
-
-            mail body: "project build error is here: ${env.BUILD_URL}" ,
-            from: 'manny.shen@pentium.network',
-            replyTo: 'manny.shen@pentium.network',
-            subject: 'project build failed',
-            to: 'manny.shen@pentium.network'
-
-        throw err
-    }
-
+   stage 'deploy Production'
+   sh 'echo "write your deploy code here"; sleep 6;'
+   archive 'target/*.jar'
 }
