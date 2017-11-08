@@ -1,4 +1,4 @@
-node('s1') {
+node('master') {
 
 
     currentBuild.result = "SUCCESS"
@@ -8,10 +8,13 @@ node('s1') {
        stage('Checkout'){
           checkout scm
           def mvnHome = tool 'mvn'
+          sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${env.BUILD_NUMBER}"
+          sh 'mvn -v'
+          
        }
 
        stage('Test'){
-          sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${env.BUILD_NUMBER}"
+          sh 'mvn -v'
           sh 'cd initial'
           sh '${mvnHome}/bin/mvn test'
 
