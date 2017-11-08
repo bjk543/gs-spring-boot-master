@@ -51,8 +51,7 @@ pipeline {
                         to: 'manny.shen@pentium.network'
             }
         }
-    }
-    catch (err) {
+        catch (err) {
 
         currentBuild.result = "FAILURE"
 
@@ -64,4 +63,6 @@ pipeline {
 
         throw err
     }
+    }
+    
 }
