@@ -22,7 +22,10 @@ pipeline {
                     sh 'mvn package'
                 } 
             }
-            stage('Deploy'){
+        }
+        
+        stage ('deploy') {
+            steps {
                 dir ('initial') {
                     sh 'java -jar target/gs-spring-boot-0.1.0.jar'
                 }
@@ -33,6 +36,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
