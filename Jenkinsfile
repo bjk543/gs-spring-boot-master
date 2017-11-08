@@ -6,28 +6,13 @@ pipeline {
     }
         stages {
             stage ('Initialize') {
-    try{
                 steps {
                     sh '''
                         echo "PATH = ${PATH}"
                         echo "M2_HOME = ${M2_HOME}"
                     ''' 
                 }
-                }catch (err) {
-
-        currentBuild.result = "FAILURE"
-
-            mail body: "project build error is here: ${env.BUILD_URL}" ,
-            from: 'manny.shen@pentium.network',
-            replyTo: 'manny.shen@pentium.network',
-            subject: 'project build failed',
-            to: 'manny.shen@pentium.network'
-
-        throw err
-    }
             }
-
-
             stage ('install') {
                 steps {
                     dir ('initial') {
@@ -35,7 +20,6 @@ pipeline {
                     } 
                 }
             }
-
             stage ('test') {
                 steps {
                     dir ('initial') {
@@ -43,7 +27,6 @@ pipeline {
                     } 
                 }
             }
-
             stage ('package') {
                 steps {
                     dir ('initial') {
@@ -55,7 +38,6 @@ pipeline {
             stage('Cleanup'){
 
             echo 'prune and cleanup'
-            sh 'curl localhost:8090'
 
             mail body: 'project build successful',
                         from: 'manny.shen@pentium.network',
