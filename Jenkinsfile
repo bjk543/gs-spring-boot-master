@@ -16,12 +16,6 @@ pipeline {
 
         stage ('Build') {
             steps {
-                echo 'This is a minimal pipeline.'
-            }
-        }
-
-        stage ('Build') {
-            steps {
                 dir ('initial') {
                     sh 'mvn -Dmaven.test.failure.ignore=true install'
                     sh 'mvn test'
