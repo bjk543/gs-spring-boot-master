@@ -6,19 +6,20 @@ node('s1') {
     try {
 
        stage('Checkout'){
-
           checkout scm
+          def mvnHome = tool 'mvn'
        }
 
        stage('Test'){
-         sh 'cd initial'
-         sh 'mvn test'
+          sh "${mvnHome}/bin/mvn versions:set -DnewVersion=${env.BUILD_NUMBER}"
+          sh 'cd initial'
+          sh '${mvnHome}/bin/mvn test'
 
        }
 
        stage('Build Docker'){
          sh 'cd initial'
-         sh 'mvn package'
+         sh '${mvnHome}/bin/mvn package'
        }
 
        stage('Deploy'){
