@@ -27,6 +27,13 @@ pipeline {
                     } 
                 }
             }
+            stage ('verify') {
+                steps {
+                    dir ('initial') {
+                        sh 'mvn verify'
+                    } 
+                }
+            }
             stage ('package') {
                 steps {
                     dir ('initial') {
@@ -34,9 +41,14 @@ pipeline {
                     } 
                 }
             }
-            
-            
-        
+            stage('Deliver') { 
+                steps {
+                    dir ('initial/target') {
+                        sh 'nohup java -jar *.jar &'
+                        sh 'while ! httping -qc1 http://localhost:8090 ; do sleep 1 ; done'
+                    }
+                }
+            }
         
     }
     
